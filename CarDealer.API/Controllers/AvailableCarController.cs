@@ -132,43 +132,40 @@ namespace CarDealer.Controllers
         [ProducesResponseType(typeof(AvailableCar), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(List<Microsoft.IdentityModel.Tokens.ValidationFailure>), 400)]
-        public IActionResult EditByID(Guid guid, [FromBody] AvailableCarData availableCarData)
+        public async Task<IActionResult> EditByID(Guid guid, [FromBody] AvailableCarData availableCarData)
         {
             /*var validationResult = _bookDataValidator.Validate(bookData);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);*/
 
-            var car = _availableCarService.GetByID(guid);
-
+            var car = await _availableCarService.GetByID(guid);
             if (car == null)
                 return NotFound();
 
-            var editedCar = _availableCarService.EditByID(guid, availableCarData);
-
+            var editedCar = await _availableCarService.EditByID(guid, availableCarData);
             return Ok(editedCar);
         }
-        #endregion
+            #endregion
 
-        #region Edit
-        [HttpPut("[Controller]/Edit_Car_By_Plate")]
+            #region Edit
+            [HttpPut("[Controller]/Edit_Car_By_Plate")]
         [ProducesResponseType(typeof(AvailableCar), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(List<Microsoft.IdentityModel.Tokens.ValidationFailure>), 400)]
-        public IActionResult EditByPlate(string plate, [FromBody] AvailableCarData availableCarData)
+        public async Task<IActionResult> EditByPlate(string plate, [FromBody] AvailableCarData availableCarData)
         {
             /*var validationResult = _bookDataValidator.Validate(bookData);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);*/
 
-            var car = _availableCarService.GetByPlate(plate);
+            var car = await _availableCarService.GetByPlate(plate);
 
             if (car == null)
                 return NotFound();
 
-            var editedCar = _availableCarService.EditByPlate(plate, availableCarData);
-
+            var editedCar = await _availableCarService.EditByPlate(plate, availableCarData);
             return Ok(editedCar);
         }
         #endregion

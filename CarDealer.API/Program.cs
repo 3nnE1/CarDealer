@@ -13,15 +13,16 @@ internal class Program
         ConfigurationManager configuration = builder.Configuration;
         string connection = configuration.GetConnectionString("DefaultConnection")!;
 
-
         #region Adding DB Context
+
         builder.Services.AddDbContext<CarDealerContext>
             (
-                options => options
-                .UseSqlServer(connection)
-                .EnableDetailedErrors()
-                .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
-            );
+            options => options
+            .UseSqlServer(connection)
+            .EnableDetailedErrors()
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information),
+            ServiceLifetime.Scoped);
         #endregion
 
 

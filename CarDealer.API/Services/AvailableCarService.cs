@@ -121,32 +121,28 @@ namespace CarDealer.Services
                     _logger.LogWarning($"The Vehicle {guid} is not found");
                     return null;
                 }
+                car.License_Plate = carData.License_Plate;
+                car.Segment = carData.Segment;
+                car.Model = carData.Model;
+                car.Year = carData.Year;
+                car.Engine = carData.Engine;
+                car.Transmission = carData.Transmission;
+                car.Mileage = carData.Mileage;
+                car.Fuel_Economy = carData.Fuel_Economy;
+                car.Key_Features = carData.Key_Features;
+                car.Paint_Color = carData.Paint_Color;
+                car.Interior_Color = carData.Interior_Color;
+                car.Accessories = carData.Accessories;
+                car.Cost = carData.Cost;
+                car.Arrival_Date = carData.Arrival_Date;
+                car.Car_Image = carData.Car_Image;
+                car.Intern_Image = carData.Intern_Image;
 
-                else
-                {
-                    car.License_Plate = carData.License_Plate;
-                    car.Segment = carData.Segment;
-                    car.Model = carData.Model;
-                    car.Year = carData.Year;
-                    car.Engine = carData.Engine;
-                    car.Transmission = carData.Transmission;
-                    car.Mileage = carData.Mileage;
-                    car.Fuel_Economy = carData.Fuel_Economy;
-                    car.Key_Features = carData.Key_Features;
-                    car.Paint_Color = carData.Paint_Color;
-                    car.Interior_Color = carData.Interior_Color;
-                    car.Accessories = carData.Accessories;
-                    car.Cost = carData.Cost;
-                    car.Arrival_Date = carData.Arrival_Date;
-                    car.Car_Image = carData.Car_Image;
-                    car.Intern_Image = carData.Intern_Image;
+                _context.AvailableCars.Update(car);
+                await _context.SaveChangesAsync();
 
-                    _context.AvailableCars.Update(car);
-                    await _context.SaveChangesAsync();
-
-                    _logger.LogInformation($"The Vehicle {guid} has been updated successfully.");
-                    return car;
-                }
+                _logger.LogInformation($"The Vehicle {guid} has been updated successfully.");
+                return car;
             }
             catch (Exception ex)
             {
@@ -171,30 +167,28 @@ namespace CarDealer.Services
                     return null;
                 }
 
-                else
-                {
-                    car.Segment = carData.Segment;
-                    car.Model = carData.Model;
-                    car.Year = carData.Year;
-                    car.Engine = carData.Engine;
-                    car.Transmission = carData.Transmission;
-                    car.Mileage = carData.Mileage;
-                    car.Fuel_Economy = carData.Fuel_Economy;
-                    car.Key_Features = carData.Key_Features;
-                    car.Paint_Color = carData.Paint_Color;
-                    car.Interior_Color = carData.Interior_Color;
-                    car.Accessories = carData.Accessories;
-                    car.Cost = carData.Cost;
-                    car.Arrival_Date = carData.Arrival_Date;
-                    car.Car_Image = carData.Car_Image;
-                    car.Intern_Image = carData.Intern_Image;
+                car.Segment = carData.Segment;
+                car.Model = carData.Model;
+                car.Year = carData.Year;
+                car.Engine = carData.Engine;
+                car.Transmission = carData.Transmission;
+                car.Mileage = carData.Mileage;
+                car.Fuel_Economy = carData.Fuel_Economy;
+                car.Key_Features = carData.Key_Features;
+                car.Paint_Color = carData.Paint_Color;
+                car.Interior_Color = carData.Interior_Color;
+                car.Accessories = carData.Accessories;
+                car.Cost = carData.Cost;
+                car.Arrival_Date = carData.Arrival_Date;
+                car.Car_Image = carData.Car_Image;
+                car.Intern_Image = carData.Intern_Image;
 
-                     _context.AvailableCars.Update(car);
-                    await _context.SaveChangesAsync();
+                _context.AvailableCars.Update(car);
+                await _context.SaveChangesAsync();
 
-                    _logger.LogInformation($"The Vehicle {plate} has been updated successfully.");
-                    return car;
-                }
+                _logger.LogInformation($"The Vehicle {plate} has been updated successfully.");
+                return car;
+
             }
             catch (Exception ex)
             {
