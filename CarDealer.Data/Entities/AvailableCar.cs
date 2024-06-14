@@ -5,7 +5,7 @@ namespace CarDealer.Data.Entities
     public sealed class AvailableCar
     {
         [Key] public Guid Car_ID { get; set; }
-        public string? License_Plate { get; set; }
+        public string License_Plate { get; set; }
         public char Segment { get; set; }
         public string Model { get; set; } = string.Empty;
         public int Year { get; set; }

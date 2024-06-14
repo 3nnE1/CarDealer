@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CarDealer.Controllers.DTO
 {
     public record AvailableCarData(
-        string? License_Plate,
+        string License_Plate,
         char Segment,
         string Model,
         int Year,

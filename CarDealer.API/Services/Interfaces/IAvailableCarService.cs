@@ -13,22 +13,15 @@ namespace CarDealer.Services.Interfaces
         Task<AvailableCar> GetByID(Guid carID);
         Task<AvailableCar> GetByPlate(string plate);
         Task<List<AvailableCar>> GetByEngine(string motorType);
-        Task<bool> Add(AvailableCar car);
+        Task<AvailableCar> AddAvailableCar(AvailableCarData car);
         Task<AvailableCar> EditByID(Guid guid, AvailableCarData carData);
         Task<AvailableCar> EditByPlate(string plate, AvailableCarData carData);
+        Task<SoldCar> Sell(Guid guid, SoldCarData soldCarData);
+        Task<string> DeleteByID(Guid guid);
+        Task<string> DeleteByPlate(string plate);
 
-        Task<bool> Sell(AvailableCar car,
-            Guid salesManager,
-            Guid customer,
-            int day,
-            int month,
-            int year,
-            decimal salePrice,
-            string paymentMethod,
-            byte warrantyMonths,
-            bool tradeIn);
-      
 
-        bool Exists(string plate);
+        bool ExistsID(Guid guid);
+        bool ExistsPlate(string plate);
     }
 }

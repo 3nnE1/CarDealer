@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace CarDealer.Controllers.DTO
 {
     public record CustomerData(
-        Guid Customer_ID,
         string TIN,
         string First_Name,
         string? Middle_Name,

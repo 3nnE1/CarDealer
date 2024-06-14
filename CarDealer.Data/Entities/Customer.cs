@@ -12,11 +12,11 @@ namespace CarDealer.Data.Entities
         public DateTime Date_Of_Birth { get; set; }
         public string Phone_Number { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Address = string.Empty;
-        public string City = string.Empty;
-        public string State = string.Empty;
-        public string Zip_Code = string.Empty;
-        public string Country = string.Empty;
-        public DateTime Registration_Date;
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public string Zip_Code { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+        public DateTime Registration_Date { get; set;}
     }
 }

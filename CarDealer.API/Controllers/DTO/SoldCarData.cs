@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace CarDealer.Controllers.DTO
 {
     public record SoldCarData(
-        Guid Sale_ID,
         Guid Car_ID,
+        string License_Plate,
         Guid Sales_Manager_ID,
         Guid Customer_ID,
-        DateTime SaleDate,
-        decimal SalePrice,
+        DateTime Sale_Date,
+        decimal Sale_Price,
         string Payment_Method,
         byte Warranty_Months,
         bool Trade_In,

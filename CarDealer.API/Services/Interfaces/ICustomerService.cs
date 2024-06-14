@@ -15,9 +15,11 @@ namespace CarDealer.Services.Interfaces
         Task<List<Customer>> GetByFirstName(string firstName);
         Task<List<Customer>> GetByMiddleName(string middleName);
         Task<List<Customer>> GetByLastName(string lastName);
-        Task<bool> Add(Customer customer);
-        Task<bool> Remove(Customer customer);
-        Task<Customer> Edit(Guid guid, CustomerData customerData);
-        
+        Task<Customer> AddCustomer(CustomerData customerData);
+        Task<Customer> EditByID(Guid guid, CustomerData customerData);
+        Task<string> DeleteByID(Guid guid);
+
+        bool ExistsByID(Guid guid);
+        bool ExistsTIN(string tin);
     }
 }

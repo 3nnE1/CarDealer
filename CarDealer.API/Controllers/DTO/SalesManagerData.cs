@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace CarDealer.Controllers.DTO
 {
     public record SalesManagerData(
-        Guid Sales_Manager_ID,
         string TIN,
         string First_Name,
         string? Middle_Name,

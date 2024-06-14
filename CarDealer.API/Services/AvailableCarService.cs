@@ -3,6 +3,8 @@ using CarDealer.Data;
 using CarDealer.Data.Entities;
 using CarDealer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Runtime.ConstrainedExecution;
 
 namespace CarDealer.Services
 {
@@ -21,26 +23,25 @@ namespace CarDealer.Services
 
 
         #region Get By ID
-        public async Task<AvailableCar> GetByID(Guid carID)
+        public async Task<AvailableCar> GetByID(Guid guid)
         {
             try
             {
-                AvailableCar? car = await _context.AvailableCars.FindAsync(carID);
-
-                if (car == null)
+                if (ExistsID(guid))                                                     
                 {
-                    _logger.LogWarning($"Vehicle: {carID}, not found.");
+                    AvailableCar? availableCar = await _context.AvailableCars.FindAsync(guid);
+                    _logger.LogInformation($"Vehicle: {guid}, has been retrieved successfully.");
+                    return availableCar;
                 }
                 else
                 {
-                    _logger.LogInformation($"Vehicle: {carID}, has been retrieved successfully.");
+                    _logger.LogWarning($"Vehicle: {guid}, not found.");
+                    return null;
                 }
-
-                return car;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"An error occurred while getting car with ID: {carID}.");
+                _logger.LogError(ex, $"An error occurred while getting car with ID: {guid}.");
                 return null;
             }
         }
@@ -52,19 +53,19 @@ namespace CarDealer.Services
         {
             try
             {
-                AvailableCar? car = await _context.AvailableCars
+                if (ExistsPlate(plate))                         
+                {
+                    AvailableCar? car = await _context.AvailableCars
                     .FirstOrDefaultAsync(c => c.License_Plate == plate);
 
-                if (car == null)
-                {
-                    _logger.LogWarning($"Vehicle: {plate}, not found.");
+                    _logger.LogInformation($"Vehicle: {plate}, has been retrieved successfully.");
+                    return car;
                 }
                 else
                 {
-                    _logger.LogInformation($"Vehicle: {plate}, has been retrieved successfully.");
+                    _logger.LogWarning($"Vehicle: {plate}, not found.");
+                    return null;
                 }
-
-                return car;
             }
             catch (Exception ex)
             {
@@ -78,32 +79,73 @@ namespace CarDealer.Services
         #region Get By Engine
         public async Task<List<AvailableCar>> GetByEngine(string motorType)
         {
-            if (string.IsNullOrEmpty(motorType))
+            try
             {
+                if (string.IsNullOrEmpty(motorType))
+                {
+                    _logger.LogWarning("The input string is null or empty");
+                    return new List<AvailableCar>();
+                }
+                else
+                {
+                    List<AvailableCar> carsList = await _context.AvailableCars
+                        .Where(a => a.Engine.ToLower().Contains(motorType.ToLower()))
+                        .ToListAsync();
+                    
+                    if (carsList.Any())
+                    {
+                        _logger.LogInformation("Here is the Vehicles List");
+                        return carsList;
+                    }
+
+                    _logger.LogWarning($"No car found with engine: {motorType}");
+                    return new List<AvailableCar>();
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"Error occurred while finding the engine: {motorType}");
                 return new List<AvailableCar>();
             }
-
-            return await _context.AvailableCars
-                .Where(a => a.Engine.ToLower().Contains(motorType.ToLower()))
-                .ToListAsync();
         }
         #endregion
 
 
         #region Add
-        public async Task<bool> Add(AvailableCar car)
+        public async Task<AvailableCar> AddAvailableCar(AvailableCarData carData)
         {
             try
             {
-                _context.AvailableCars.Add(car);
+                var availableCar = new AvailableCar
+                {
+                    License_Plate = carData.License_Plate,
+                    Segment = carData.Segment,
+                    Model = carData.Model,
+                    Year = carData.Year,
+                    Engine = carData.Engine,
+                    Transmission = carData.Transmission,
+                    Mileage = carData.Mileage,
+                    Fuel_Economy = carData.Fuel_Economy,
+                    Key_Features = carData.Key_Features,
+                    Paint_Color = carData.Paint_Color,
+                    Interior_Color = carData.Interior_Color,
+                    Accessories = carData.Accessories,
+                    Cost = carData.Cost,
+                    Arrival_Date = carData.Arrival_Date,
+                    Car_Image = carData.Car_Image,
+                    Intern_Image = carData.Intern_Image
+                };
+
+                _context.AvailableCars.Add(availableCar);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation($"Vehicle added successfully: {car}");
-                return true;
+
+                _logger.LogInformation($"Vehicle added successfully: {availableCar}");
+                return availableCar;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error occurred while adding a Vehicle: {car}");
-                return false;
+                _logger.LogError(ex, $"Error occurred while adding a Vehicle: {carData}");
+                return null;
             }
         }
         #endregion
@@ -114,35 +156,38 @@ namespace CarDealer.Services
         {
             try
             {
-                AvailableCar? car = await _context.AvailableCars.FindAsync(guid);
-
-                if (car == null)
+                if (ExistsID(guid))
                 {
-                    _logger.LogWarning($"The Vehicle {guid} is not found");
+                    AvailableCar? car = await _context.AvailableCars.FindAsync(guid);
+
+                    car.License_Plate = carData.License_Plate;
+                    car.Segment = carData.Segment;
+                    car.Model = carData.Model;
+                    car.Year = carData.Year;
+                    car.Engine = carData.Engine;
+                    car.Transmission = carData.Transmission;
+                    car.Mileage = carData.Mileage;
+                    car.Fuel_Economy = carData.Fuel_Economy;
+                    car.Key_Features = carData.Key_Features;
+                    car.Paint_Color = carData.Paint_Color;
+                    car.Interior_Color = carData.Interior_Color;
+                    car.Accessories = carData.Accessories;
+                    car.Cost = carData.Cost;
+                    car.Arrival_Date = carData.Arrival_Date;
+                    car.Car_Image = carData.Car_Image;
+                    car.Intern_Image = carData.Intern_Image;
+
+                    _context.AvailableCars.Update(car);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation($"The Vehicle {guid} has been updated successfully.");
+                    return car;
+                }
+                else
+                {
+                    _logger.LogWarning($"Can not update the Vehicle {guid}");
                     return null;
                 }
-                car.License_Plate = carData.License_Plate;
-                car.Segment = carData.Segment;
-                car.Model = carData.Model;
-                car.Year = carData.Year;
-                car.Engine = carData.Engine;
-                car.Transmission = carData.Transmission;
-                car.Mileage = carData.Mileage;
-                car.Fuel_Economy = carData.Fuel_Economy;
-                car.Key_Features = carData.Key_Features;
-                car.Paint_Color = carData.Paint_Color;
-                car.Interior_Color = carData.Interior_Color;
-                car.Accessories = carData.Accessories;
-                car.Cost = carData.Cost;
-                car.Arrival_Date = carData.Arrival_Date;
-                car.Car_Image = carData.Car_Image;
-                car.Intern_Image = carData.Intern_Image;
-
-                _context.AvailableCars.Update(car);
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"The Vehicle {guid} has been updated successfully.");
-                return car;
             }
             catch (Exception ex)
             {
@@ -158,37 +203,39 @@ namespace CarDealer.Services
         {
             try
             {
-                AvailableCar? car = await _context.AvailableCars
+                if (ExistsPlate(plate))
+                {
+                    AvailableCar? car = await _context.AvailableCars
                      .FirstOrDefaultAsync(c => c.License_Plate == plate);
 
-                if (car == null)
+                    car.License_Plate = plate;
+                    car.Segment = carData.Segment;
+                    car.Model = carData.Model;
+                    car.Year = carData.Year;
+                    car.Engine = carData.Engine;
+                    car.Transmission = carData.Transmission;
+                    car.Mileage = carData.Mileage;
+                    car.Fuel_Economy = carData.Fuel_Economy;
+                    car.Key_Features = carData.Key_Features;
+                    car.Paint_Color = carData.Paint_Color;
+                    car.Interior_Color = carData.Interior_Color;
+                    car.Accessories = carData.Accessories;
+                    car.Cost = carData.Cost;
+                    car.Arrival_Date = carData.Arrival_Date;
+                    car.Car_Image = carData.Car_Image;
+                    car.Intern_Image = carData.Intern_Image;
+
+                    _context.AvailableCars.Update(car);
+                    await _context.SaveChangesAsync();
+
+                    _logger.LogInformation($"The Vehicle {plate} has been updated successfully.");
+                    return car;
+                }
+                else
                 {
-                    _logger.LogWarning($"The Vehicle {plate} is not found");
+                    _logger.LogWarning($"Can not update the Vehicle {plate}");
                     return null;
                 }
-
-                car.Segment = carData.Segment;
-                car.Model = carData.Model;
-                car.Year = carData.Year;
-                car.Engine = carData.Engine;
-                car.Transmission = carData.Transmission;
-                car.Mileage = carData.Mileage;
-                car.Fuel_Economy = carData.Fuel_Economy;
-                car.Key_Features = carData.Key_Features;
-                car.Paint_Color = carData.Paint_Color;
-                car.Interior_Color = carData.Interior_Color;
-                car.Accessories = carData.Accessories;
-                car.Cost = carData.Cost;
-                car.Arrival_Date = carData.Arrival_Date;
-                car.Car_Image = carData.Car_Image;
-                car.Intern_Image = carData.Intern_Image;
-
-                _context.AvailableCars.Update(car);
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"The Vehicle {plate} has been updated successfully.");
-                return car;
-
             }
             catch (Exception ex)
             {
@@ -198,58 +245,148 @@ namespace CarDealer.Services
         }
         #endregion
 
+
         #region Sell
-        public async Task<bool> Sell(AvailableCar car, Guid salesManager, Guid customer, int day, int month, int year, decimal salePrice, string paymentMethod, byte warrantyMonths, bool tradeIn)
+        public async Task<SoldCar> Sell(Guid guid, SoldCarData soldCarData)
         {
             try
             {
-                var soldCar = new SoldCar();
+                if (ExistsID(guid))
+                {
+                    AvailableCar? availableCar = await _context.AvailableCars.FindAsync(guid);
+                    SoldCar soldCar = new SoldCar
+                    {
+                        Sale_ID = new Guid(),
+                        Car_ID = guid,
+                        License_Plate = availableCar.License_Plate,
+                        Sales_Manager_ID = soldCarData.Sales_Manager_ID,
+                        Customer_ID = soldCarData.Customer_ID,
+                        Sale_Date = soldCarData.Sale_Date,
+                        Sale_Price = soldCarData.Sale_Price,
+                        Payment_Method = soldCarData.Payment_Method,
+                        Warranty_Months = soldCarData.Warranty_Months,
+                        Trade_In = soldCarData.Trade_In,
+                        Sale_Manager_Image = null,
+                        Car_Image = null,
+                    };
 
-                soldCar.Sale_ID = new Guid();
-                soldCar.Car_ID = car.Car_ID;
-                soldCar.Sales_Manager_ID = salesManager;
-                soldCar.Customer_ID = customer;
-                soldCar.SaleDate = new DateTime(year, month, day);
-                soldCar.SalePrice = salePrice;
-                soldCar.Payment_Method = paymentMethod;
-                soldCar.Warranty_Months = warrantyMonths;
-                soldCar.Trade_In = tradeIn;
-                soldCar.Sale_Manager_Image = null;
-                soldCar.Car_Image = null;
+                    await _context.SoldCars.AddAsync(soldCar);
+                    _context.AvailableCars.Remove(availableCar);
+                    await _context.SaveChangesAsync();
 
-                await _context.SoldCars.AddAsync(soldCar);
-                _logger.LogInformation($"{soldCar.Car_ID} has been sold successfully.");
-
-                _logger.LogInformation($"{car.Car_ID} is not more available.");
-                _context.AvailableCars.Remove(car);
-
-                await _context.SaveChangesAsync();
-                
-                return true;
+                    _logger.LogInformation($"The Vehicle {guid} has been sold successfully.");
+                    return soldCar;
+                }
+                else
+                {
+                    _logger.LogWarning($"Can not sell the Vehicle {guid}.");
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error occured while selling the Vehicle {car.Car_ID}");
-                return false;
+                _logger.LogError(ex, $"Error occurred while selling the Vehicle {guid}.");
+                return null;
             }
         }
         #endregion
 
 
-        #region Exists
-        public bool Exists(string plate)
+        #region Delete By ID
+        public async Task<string> DeleteByID(Guid guid)
         {
-            if (!_context.AvailableCars.Any(c => c.License_Plate == plate))
+            try
             {
-                _logger.LogInformation("The Vehicle does not Exists.");
-                return false;
+                if (ExistsID(guid))
+                {
+                    AvailableCar? car = await _context.AvailableCars.FindAsync(guid);
+                    _context.AvailableCars.Remove(car);
+                    _context.SaveChanges();
+                    _logger.LogInformation($"The Vehicle {guid} has been deleted successfully.");
+
+                    return $"The Vehicle {guid} has been deleted successfully.";
+                }
+                else
+                {
+                    _logger.LogWarning($"Can not delete the Vehicle {guid}");
+
+                    return $"Can not delete the Vehicle {guid}";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error occurred while deleting the Vehicle {guid}.");
+                return $"Error occurred while deleting the Vehicle {guid}.";
+            }
+        }
+        #endregion
+
+
+        #region Delete By Plate
+        public async Task<string> DeleteByPlate(string plate)
+        {
+            try
+            {
+                if (ExistsPlate(plate))
+                {
+                    AvailableCar? car = await _context.AvailableCars
+                     .FirstOrDefaultAsync(c => c.License_Plate == plate);
+                    
+                    _context.AvailableCars.Remove(car);
+                    _context.SaveChanges();      
+                    _logger.LogInformation($"The Vehicle {plate} has been deleted successfully.");
+              
+                    return $"The Vehicle {plate} has been deleted successfully.";
+                }
+                else
+                {
+                    _logger.LogWarning($"Can not delete the Vehicle {plate}");
+                    return $"Can not delete the Vehicle {plate}";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error occurred while deleting the Vehicle {plate}.");
+                return $"Error occurred while deleting the Vehicle {plate}.";
+            }
+        }
+        #endregion
+
+
+        #region Exists Guid
+        public bool ExistsID(Guid guid)
+        {
+            if (_context.AvailableCars.Any(c => c.Car_ID == guid))
+            {
+                _logger.LogInformation("The Vehicle Exists!");
+                return true;
             }
             else
             {
-                _logger.LogWarning("The Vehicle already Exists!");
-                return true;
+                _logger.LogInformation("The Vehicle Does Not Exists.");
+                return false;
             }
         }
         #endregion
+
+
+        #region Exists Plate
+        public bool ExistsPlate(string plate)
+        {
+            if (_context.AvailableCars.Any(c => c.License_Plate == plate))
+            {
+                _logger.LogInformation("The Vehicle Exists.");
+                return true;
+            }
+            else
+            {
+                _logger.LogInformation("The Vehicle Does Not Exists.");
+                return false;
+            }
+        }
+        #endregion
+
+
+        
     }
 }
