@@ -167,6 +167,7 @@ namespace CarDealer.Services
             {
                 SoldCar soldCar = new SoldCar
                 {
+                    Sale_ID = Guid.NewGuid(),
                     Car_ID = carData.Car_ID,
                     License_Plate = carData.License_Plate,
                     Sales_Manager_ID = carData.Sales_Manager_ID,

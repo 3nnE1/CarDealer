@@ -17,9 +17,9 @@ namespace CarDealer.Controllers
     {
         #region Setup
         private readonly ISoldCarService _soldCarService;
-        private readonly ILogger<AvailableCarController> _logger;
+        private readonly ILogger<SoldCarController> _logger;
 
-        public SoldCarController(ISoldCarService soldCarService, ILogger<AvailableCarController> logger)
+        public SoldCarController(ISoldCarService soldCarService, ILogger<SoldCarController> logger)
         {
             _soldCarService = soldCarService;
             _logger = logger;

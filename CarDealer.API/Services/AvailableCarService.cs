@@ -256,7 +256,7 @@ namespace CarDealer.Services
                     AvailableCar? availableCar = await _context.AvailableCars.FindAsync(guid);
                     SoldCar soldCar = new SoldCar
                     {
-                        Sale_ID = new Guid(),
+                        Sale_ID = Guid.NewGuid(),
                         Car_ID = guid,
                         License_Plate = availableCar.License_Plate,
                         Sales_Manager_ID = soldCarData.Sales_Manager_ID,
