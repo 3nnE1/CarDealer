@@ -1,0 +1,13 @@
+<div class="search">
+  <input [(ngModel)]="engineSearch" placeholder="Engine type" />
+  <button (click)="search()">Search</button>
+</div>
+
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<ul *ngIf="!loading && !error">
+  <li *ngFor="let car of cars">
+    {{ car.brand }} - {{ car.model }} - {{ car.engine }}
+  </li>
+</ul>
