@@ -17,9 +17,9 @@ namespace CarDealer.Controllers
     {
         #region Setup
         private readonly ICustomerService _customerService;
-        private readonly ILogger<AvailableCarController> _logger;
+        private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(ICustomerService customerService, ILogger<AvailableCarController> logger)
+        public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
         {
             _customerService = customerService;
             _logger = logger;
@@ -51,13 +51,13 @@ namespace CarDealer.Controllers
         {
             Customer customer = await _customerService.GetByTIN(tin);
 
-            if (tin == null)
+            if (customer == null)
             {
                 _logger.LogWarning($"No Customer found with TIN: {tin}");
                 return NotFound();
             }
 
-            return Ok(tin);
+            return Ok(customer);
         }
         #endregion
 
@@ -101,7 +101,7 @@ namespace CarDealer.Controllers
 
 
         #region Get By Last Name
-        [HttpGet("[controller]/Get_By_Las_Name")]
+        [HttpGet("[controller]/Get_By_Last_Name")]
         [ProducesResponseType(typeof(List<Customer>), 200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetByLastName(string name)
