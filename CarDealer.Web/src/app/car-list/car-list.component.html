@@ -1,0 +1,8 @@
+<div class="car-card" *ngFor="let car of cars">
+  <mat-card>
+    <mat-card-title>{{car.model}}</mat-card-title>
+    <mat-card-content>
+      Prezzo: {{car.price | currency:'EUR'}}
+    </mat-card-content>
+  </mat-card>
+</div>
